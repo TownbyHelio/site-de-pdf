@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Principal</title>
+        <meta charset="UTF-8">
+        <script defer>
+            const erroH = document.getElementById("erro-h")
+
+            pdf = window.location.pathname.substring(5).replaceAll("%20", " ")
+            fetch("/api/pdf/", {
+                method:"POST",
+                headers: {'Accept': 'application/json','Content-Type': 'application/json'},
+                body: JSON.stringify({nome: pdf})
+            }).then(r => r.json()).then(r => {
+                console.log(r)
+                if (!r.sucesso) {
+                    erroH.style.visibility = "visible"
+                }
+                else {
+                    const pdfobj = document.createElement("object");
+                    pdfobj.style.width = "100vw"
+                    pdfobj.style.height = "100vh"
+                    pdfobj.style.position = "absolute"
+                    pdfobj.style.top = "0"
+                    pdfobj.style.left = "0"
+                    pdfobj.type = 'application/pdf'
+                    pdfobj.data = r.conteudo
+                    document.body.appendChild(pdfobj)
+                }
+            })
+        </script>
+    </head>
+
+    <body>
+        <h3 id="erro-h" style="visibility: hidden;">ERRO</h3>
+    </body>
+</html>
